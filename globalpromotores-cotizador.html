@@ -1,31 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Global Promotores | Cotizador</title>
 <style>
 :root{
-  --blue:#1F5FAF;
-  --blue-dark:#163E73;
-  --blue-accent:#2E78D6;
-  --black:#111111;
-  --gray:#5E6A75;
-  --gray-light:#F4F6F8;
-  --success:#2E7D32;
-  --error:#C62828;
-  --warn:#ED6C02;
+  --blue:#1F5FAF;--blue-dark:#163E73;--blue-accent:#2E78D6;
+  --black:#111111;--gray:#5E6A75;--bg:#F4F6F8;
+  --success:#2E7D32;--error:#C62828;
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui;}
 body{background:#fff;color:var(--black);}
 .container{max-width:1100px;margin:auto;padding:24px;}
-header{display:flex;align-items:center;justify-content:space-between;padding:16px 0;}
-header img{height:52px;}
-h1{color:var(--black);font-size:2rem;margin-bottom:6px;}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;}
+header img{height:56px;}
+h1{font-size:2rem;margin-bottom:4px;}
 p.lead{color:var(--gray);}
-.section{background:var(--gray-light);border-radius:8px;padding:20px;margin:14px 0;}
+.section{background:var(--bg);border-radius:8px;padding:20px;margin:14px 0;}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-label{display:block;font-weight:600;color:var(--black);margin-bottom:6px;}
+label{display:block;font-weight:600;margin-bottom:6px;}
 input,select,textarea{
   width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;
 }
@@ -34,18 +28,28 @@ button{
   padding:14px;font-weight:700;cursor:pointer;
 }
 button:hover{background:var(--blue-dark);}
-.badge{background:var(--blue-accent);color:#fff;padding:6px 10px;border-radius:8px;font-size:12px;}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;}
+.actions button{flex:1;min-width:200px;}
 .small{font-size:12px;color:var(--gray);}
 .hidden{display:none;}
-.card{background:#fff;border-radius:8px;padding:16px;border:1px solid #eee;}
-.actions{display:flex;gap:10px;flex-wrap:wrap;}
-.summary{background:#fff;border:1px solid #eee;border-radius:8px;padding:16px;}
 .status{font-weight:700;}
 .status.ok{color:var(--success);}
 .status.err{color:var(--error);}
+
+/* Modal */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;
+  align-items:center;justify-content:center;padding:20px;z-index:50;
+}
+.modal{
+  background:#fff;border-radius:12px;padding:20px;max-width:600px;width:100%;
+}
+.modal h3{margin-bottom:10px;}
+.modal .actions{margin-top:16px;}
 @media(max-width:800px){
   .grid{grid-template-columns:1fr;}
-  header{flex-direction:column;align-items:flex-start;gap:12px;}
+  header{flex-direction:column;align-items:flex-start;}
+  .actions button{width:100%;}
 }
 </style>
 </head>
@@ -56,97 +60,73 @@ button:hover{background:var(--blue-dark);}
       <h1>Cotizador Inteligente de Seguros</h1>
       <p class="lead">Captura datos, valida y genera lead con pago pendiente.</p>
     </div>
-    <img src="logo.png" alt="Global Promotores Seguros"/>
+    <img src="logo.png" alt="Global Promotores Seguros">
   </header>
 
   <div class="section">
-    <span class="badge">Paso 1</span>
     <h2>Datos personales</h2>
     <div class="grid">
-      <div>
-        <label>Nombre completo *</label>
-        <input id="nombre" required />
-      </div>
-      <div>
-        <label>Edad *</label>
-        <input id="edad" type="number" min="18" max="80" required />
-      </div>
-      <div>
-        <label>CP *</label>
-        <input id="cp" maxlength="5" required />
-        <div id="cpStatus" class="small"></div>
-      </div>
-      <div>
-        <label>Teléfono *</label>
-        <input id="telefono" required />
-      </div>
-      <div>
-        <label>Email *</label>
-        <input id="email" type="email" required />
-      </div>
+      <div><label>Nombre completo *</label><input id="nombre" required></div>
+      <div><label>Edad *</label><input id="edad" type="number" min="18" max="80" required></div>
+      <div><label>CP *</label><input id="cp" maxlength="5" required><div id="cpStatus" class="small"></div></div>
+      <div><label>Teléfono *</label><input id="telefono" required></div>
+      <div><label>Email *</label><input id="email" type="email" required></div>
     </div>
   </div>
 
   <div class="section">
-    <span class="badge">Paso 2</span>
     <h2>Vehículo</h2>
     <div class="grid">
-      <div>
-        <label>Año *</label>
-        <input id="year" type="number" min="1990" max="2026" required />
-      </div>
-      <div>
-        <label>Marca *</label>
-        <input id="make" placeholder="ej: Nissan" required />
-      </div>
+      <div><label>Año *</label><input id="year" type="number" min="1990" max="2026" required></div>
+      <div><label>Marca *</label><input id="make" required></div>
       <div>
         <label>Modelo *</label>
-        <select id="model">
-          <option value="">Buscar modelo</option>
-        </select>
+        <select id="model"><option value="">Buscar modelo</option></select>
         <button type="button" onclick="loadModels()">Buscar modelos</button>
       </div>
-      <div>
-        <label>Versión *</label>
-        <input id="version" placeholder="Ej: Platinum CVT" required />
-      </div>
+      <div><label>Versión *</label><input id="version" required></div>
     </div>
   </div>
 
   <div class="section">
-    <span class="badge">Paso 3</span>
     <h2>Validaciones</h2>
     <div>
-      <label><input type="checkbox" id="brokerCheck" /> Soy corredor con cédula</label>
-      <input id="brokerId" class="hidden" placeholder="Cédula del corredor" />
+      <label><input type="checkbox" id="brokerCheck"> Soy corredor con cédula</label>
+      <input id="brokerId" class="hidden" placeholder="Cédula del corredor">
     </div>
     <div>
-      <label><input type="checkbox" id="cardCheck" /> Subir tarjeta de circulación</label>
-      <input id="cardFile" type="file" class="hidden" accept="image/*" />
+      <label><input type="checkbox" id="cardCheck"> Subir tarjeta de circulación</label>
+      <input id="cardFile" type="file" class="hidden" accept="image/*">
       <div id="cardLink" class="small"></div>
     </div>
     <div>
-      <label><input type="checkbox" id="nivCheck" /> Subir foto de NIV</label>
-      <input id="nivFile" type="file" class="hidden" accept="image/*" />
+      <label><input type="checkbox" id="nivCheck"> Subir foto de NIV</label>
+      <input id="nivFile" type="file" class="hidden" accept="image/*">
       <div id="nivLink" class="small"></div>
     </div>
     <div>
       <label>Serie/NIV (opcional)</label>
-      <input id="nivText" placeholder="17 caracteres" />
+      <input id="nivText" placeholder="17 caracteres">
     </div>
   </div>
 
   <div class="section">
-    <span class="badge">Paso 4</span>
-    <h2>Resumen</h2>
-    <div id="summary" class="summary">Completa el formulario para ver el resumen.</div>
-    <div class="actions" style="margin-top:10px;">
-      <button type="button" onclick="showSummary()">Guardar y enviar</button>
-      <button type="button" onclick="enableEdit()">Corregir</button>
+    <h2>Enviar</h2>
+    <div class="actions">
+      <button type="button" onclick="openSummary()">Guardar y enviar</button>
     </div>
-    <div id="sendArea" class="hidden" style="margin-top:10px;">
+    <div id="sendStatus" class="status"></div>
+  </div>
+</div>
+
+<!-- Modal resumen -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>Resumen</h3>
+    <div id="summary"></div>
+    <div class="actions">
       <button type="button" onclick="submitLead()">Enviar</button>
-      <span id="sendStatus" class="status"></span>
+      <button type="button" onclick="closeModal()">Corregir</button>
     </div>
   </div>
 </div>
@@ -154,9 +134,6 @@ button:hover{background:var(--blue-dark);}
 <script>
 const SUPABASE_URL="REEMPLAZA_SUPABASE_URL";
 const SUPABASE_ANON="REEMPLAZA_SUPABASE_ANON";
-
-const sessionId = localStorage.getItem("gp_session") || crypto.randomUUID();
-localStorage.setItem("gp_session", sessionId);
 
 document.getElementById("brokerCheck").addEventListener("change", e=>{
   document.getElementById("brokerId").classList.toggle("hidden", !e.target.checked);
@@ -176,9 +153,8 @@ async function validateCP(){
   try{
     const res = await fetch(`https://sepomex.icalialabs.com/api/v1/zip_codes?zip_code=${cp}`);
     const data = await res.json();
-    if(data && data.zip_codes && data.zip_codes.length>0){
-      setCP("CP válido", true);
-    }else setCP("CP no encontrado", false);
+    if(data && data.zip_codes && data.zip_codes.length>0) setCP("CP válido", true);
+    else setCP("CP no encontrado", false);
   }catch(e){ setCP("Error validando CP", false); }
 }
 function setCP(msg, ok){
@@ -205,7 +181,6 @@ async function loadModels(){
 
 function getForm(){
   return {
-    session_id: sessionId,
     nombre: v("nombre"), edad: v("edad"), cp: v("cp"),
     telefono: v("telefono"), email: v("email"),
     year: v("year"), make: v("make"), model: v("model"),
@@ -215,11 +190,10 @@ function getForm(){
     niv_url: window._nivUrl || ""
   };
 }
-
 function v(id){ return document.getElementById(id).value.trim(); }
 function c(id){ return document.getElementById(id).checked; }
 
-function showSummary(){
+function openSummary(){
   const d = getForm();
   document.getElementById("summary").innerHTML = `
     <b>${d.nombre}</b> (${d.edad})<br/>
@@ -229,12 +203,9 @@ function showSummary(){
     NIV: ${d.niv || "No"}<br/>
     Tarjeta: ${d.card_url ? "Sí" : "No"} | Foto NIV: ${d.niv_url ? "Sí" : "No"}
   `;
-  document.getElementById("sendArea").classList.remove("hidden");
+  document.getElementById("modalBg").style.display="flex";
 }
-
-function enableEdit(){
-  document.getElementById("sendArea").classList.add("hidden");
-}
+function closeModal(){ document.getElementById("modalBg").style.display="none"; }
 
 async function uploadFile(file, prefix){
   const filename = `${prefix}_${Date.now()}_${file.name}`;
@@ -258,7 +229,6 @@ document.getElementById("cardFile").addEventListener("change", async e=>{
   window._cardUrl = url;
   document.getElementById("cardLink").textContent = "Tarjeta cargada ✔";
 });
-
 document.getElementById("nivFile").addEventListener("change", async e=>{
   if(!e.target.files[0]) return;
   const url = await uploadFile(e.target.files[0],"niv");
@@ -267,6 +237,7 @@ document.getElementById("nivFile").addEventListener("change", async e=>{
 });
 
 async function submitLead(){
+  closeModal();
   const d = getForm();
   const res = await fetch("/.netlify/functions/lead",{
     method:"POST",
